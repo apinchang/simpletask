@@ -86,6 +86,7 @@ function addTask(category) {
 
 function renderAllTasks() {
   console.log('渲染所有任务:', tasks);
+  renderCategoryTitles();
   Object.keys(categoryMap).forEach(renderTasks);
 }
 
@@ -153,7 +154,10 @@ function getTaskCategory(taskItem) {
 }
 
 function saveTasks() {
-  chrome.storage.local.set({ tasks, historyTasks, categoryTitles });
+  console.log('保存数据:', { tasks, historyTasks, categoryTitles });
+  chrome.storage.local.set({ tasks, historyTasks, categoryTitles }, () => {
+    console.log('数据保存完成');
+  });
 }
 
 // 调试函数：打印存储状态
