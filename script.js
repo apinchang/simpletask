@@ -392,6 +392,7 @@ function handleExport() {
   const exportData = {
     tasks: tasks,
     historyTasks: includeDeleted ? historyTasks : [],
+    categoryTitles: categoryTitles,
     exportDate: new Date().toISOString()
   };
   
@@ -465,6 +466,12 @@ function handleImport() {
                 historyTasks.push(importedHistoryTask);
               }
             });
+          }
+          
+          // 导入分类标题
+          if (importedData.categoryTitles) {
+            categoryTitles = importedData.categoryTitles;
+            renderCategoryTitles();
           }
           
           // 保存并重新渲染
