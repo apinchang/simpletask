@@ -252,6 +252,7 @@ function bindCategoryTitleEdit() {
   
   titles.forEach(title => {
     title.addEventListener('dblclick', function() {
+      const titleElement = this;
       const currentText = this.textContent;
       const category = this.closest('.category');
       
@@ -282,10 +283,13 @@ function bindCategoryTitleEdit() {
         const newTitle = input.value.trim();
         if (newTitle && newTitle !== currentText) {
           categoryTitles[categoryType] = newTitle;
+          console.log('保存标题:', categoryType, newTitle);
           saveTasks();
+        } else {
+          console.log('标题未改变或为空，不保存');
         }
-        this.textContent = categoryTitles[categoryType];
-        this.style.display = '';
+        titleElement.textContent = categoryTitles[categoryType];
+        titleElement.style.display = '';
         input.remove();
       };
       
@@ -295,8 +299,8 @@ function bindCategoryTitleEdit() {
         if (e.key === 'Enter') {
           input.blur();
         } else if (e.key === 'Escape') {
-          this.textContent = currentText;
-          this.style.display = '';
+          titleElement.textContent = currentText;
+          titleElement.style.display = '';
           input.remove();
         }
       });
