@@ -8,9 +8,9 @@
   },
   "permissions": ["storage"],
   "icons": {
-    "16": "icon.svg",
-    "32": "icon.svg",
-    "48": "icon.svg",
-    "128": "icon.svg"
+    "16": "icons/tasks-16.png",
+    "32": "icons/tasks-32.png",
+    "48": "icons/tasks-48.png",
+    "128": "icons/tasks-128.png"
   }
 }
