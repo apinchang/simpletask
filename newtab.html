@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>简单任务 - 新标签页</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>🏠 简单任务</h1>
+    <p>20%的工作带来80%的效益</p>
+    <!-- <nav class="nav-links">
+      <a href="history.html">📜 历史记录</a>
+    </nav> -->
+  </header>
+
+  <div class="categories">
+    <!-- 此处直接复用index.html的三大任务分类区块 -->
+    <section class="category urgent-important">
+      <h2>🔥 重要且紧急</h2>
+      <div class="input-group">
+        <input type="text" placeholder="添加任务...">
+        <button>+</button>
+      </div>
+      <ul class="task-list"></ul>
+    </section>
+
+    <section class="category important">
+      <h2>⏳ 重要不紧急</h2>
+      <div class="input-group">
+        <input type="text" placeholder="添加任务...">
+        <button>+</button>
+      </div>
+      <ul class="task-list"></ul>
+    </section>
+
+    <section class="category">
+      <h2>📦 不重要不紧急，不干也行</h2>
+      <div class="input-group">
+        <input type="text" placeholder="添加任务...">
+        <button>+</button>
+      </div>
+      <ul class="task-list"></ul>
+    </section>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="copyright">© 2026 简单任务</div>
+      <div class="footer-links">
+        <a href="#" id="history-link">📜 历史任务</a>
+        <a href="#" id="export-link">📤 导出</a>
+        <a href="#" id="import-link">📥 导入</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="Sortable.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
