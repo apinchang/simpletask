@@ -78,6 +78,32 @@ input[type="text"] {
   border-radius: 4px;
 }
 
+.title-edit-input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #3498db;
+  border-radius: 4px;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+
+.title-edit-input:focus {
+  outline: none;
+  border-color: #2980b9;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+.category h2 {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.category h2:hover {
+  color: #3498db;
+}
+
 button {
   padding: 8px 12px;
   background: #d7d8ff;

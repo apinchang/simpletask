@@ -8,6 +8,13 @@ let tasks = {
 // 历史任务存储
 let historyTasks = [];
 
+// 分类标题存储
+let categoryTitles = {
+  urgentImportant: '🔥 重要且紧急',
+  important: '⏳ 重要不紧急',
+  normal: '📦 不重要不紧急，不干也行'
+};
+
 // DOM元素
 const categoryMap = {
   urgentImportant: {
@@ -28,7 +35,7 @@ const categoryMap = {
 };
 
 // 加载保存的任务
-chrome.storage.local.get(['tasks', 'historyTasks'], (result) => {
+chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles'], (result) => {
   if (result.tasks) {
     tasks = result.tasks;
   }
@@ -36,6 +43,9 @@ chrome.storage.local.get(['tasks', 'historyTasks'], (result) => {
     historyTasks = result.historyTasks;
   } else {
     historyTasks = [];
+  }
+  if (result.categoryTitles) {
+    categoryTitles = result.categoryTitles;
   }
   
   // 根据当前页面渲染对应内容
@@ -143,7 +153,7 @@ function getTaskCategory(taskItem) {
 }
 
 function saveTasks() {
-  chrome.storage.local.set({ tasks, historyTasks });
+  chrome.storage.local.set({ tasks, historyTasks, categoryTitles });
 }
 
 // 调试函数：打印存储状态
@@ -159,6 +169,12 @@ function dumpStorage() {
 // 初始化渲染
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM加载完成，当前页面:', window.location.href);
+  
+  // 渲染分类标题
+  renderCategoryTitles();
+  
+  // 绑定分类标题编辑事件
+  bindCategoryTitleEdit();
   
   // 绑定页脚链接事件
   bindFooterLinks();
@@ -210,6 +226,81 @@ function renderHistoryTasks() {
   // 绑定彻底删除按钮事件
   document.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', permanentlyDeleteTask);
+  });
+}
+
+// 渲染分类标题
+function renderCategoryTitles() {
+  const urgentImportantTitle = document.querySelector('.urgent-important h2');
+  const importantTitle = document.querySelector('.important h2');
+  const normalTitle = document.querySelector('.category:not(.urgent-important):not(.important) h2');
+  
+  if (urgentImportantTitle) {
+    urgentImportantTitle.textContent = categoryTitles.urgentImportant;
+  }
+  if (importantTitle) {
+    importantTitle.textContent = categoryTitles.important;
+  }
+  if (normalTitle) {
+    normalTitle.textContent = categoryTitles.normal;
+  }
+}
+
+// 绑定分类标题编辑事件
+function bindCategoryTitleEdit() {
+  const titles = document.querySelectorAll('.category h2');
+  
+  titles.forEach(title => {
+    title.addEventListener('dblclick', function() {
+      const currentText = this.textContent;
+      const category = this.closest('.category');
+      
+      // 确定分类类型
+      let categoryType;
+      if (category.classList.contains('urgent-important')) {
+        categoryType = 'urgentImportant';
+      } else if (category.classList.contains('important')) {
+        categoryType = 'important';
+      } else {
+        categoryType = 'normal';
+      }
+      
+      // 创建输入框
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = currentText;
+      input.className = 'title-edit-input';
+      
+      // 替换标题
+      this.style.display = 'none';
+      this.parentNode.insertBefore(input, this);
+      input.focus();
+      input.select();
+      
+      // 保存函数
+      const saveTitle = () => {
+        const newTitle = input.value.trim();
+        if (newTitle && newTitle !== currentText) {
+          categoryTitles[categoryType] = newTitle;
+          saveTasks();
+        }
+        this.textContent = categoryTitles[categoryType];
+        this.style.display = '';
+        input.remove();
+      };
+      
+      // 绑定事件
+      input.addEventListener('blur', saveTitle);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          input.blur();
+        } else if (e.key === 'Escape') {
+          this.textContent = currentText;
+          this.style.display = '';
+          input.remove();
+        }
+      });
+    });
   });
 }
 
