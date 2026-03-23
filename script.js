@@ -145,8 +145,10 @@ function renderTasks(category) {
   list.innerHTML = tasks[category].map(task => `
     <li class="task-item" data-id="${task.id}">
       <div class="task-content">
-        <span class="delete-btn">×</span>
         <span class="task-text${task.completed ? ' completed' : ''}">${task.text}</span>
+        <span class="delete-btn">×</span>
+      </div>
+      <div class="task-meta">
         <span class="task-date">${formatDate(task.createdAt)}</span>
       </div>
     </li>
