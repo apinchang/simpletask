@@ -65,22 +65,10 @@ chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles', 'currentThe
     applyTheme(currentTheme);
   }
   
-  // 根据当前页面渲染对应内容
-  if (document.querySelector('#history-table')) {
-    renderHistoryTasks();
-  } else {
+  // 渲染所有任务（仅在主页面）
+  if (!document.querySelector('#history-list')) {
     renderAllTasks();
   }
-});
-
-// 为每个分类绑定事件
-Object.keys(categoryMap).forEach(category => {
-  const { button, input } = categoryMap[category];
-  
-  button.addEventListener('click', () => addTask(category));
-  input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addTask(category);
-  });
 });
 
 function addTask(category) {
@@ -159,7 +147,7 @@ function deleteTask(e) {
     // 添加到历史记录
     const historyTask = {
       ...task,
-      category: categoryMap[category].name,
+      category: categoryTitles[category],
       deletedAt: Date.now()
     };
     historyTasks.push(historyTask);
@@ -185,7 +173,7 @@ function toggleTaskComplete(e) {
       // 添加到历史记录
       const completedTask = {
         ...task,
-        category: categoryMap[category].name,
+        category: categoryTitles[category],
         completedAt: Date.now()
       };
       
@@ -237,6 +225,20 @@ function dumpStorage() {
 // 初始化渲染
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM加载完成，当前页面:', window.location.href);
+  
+  // 为每个分类绑定事件
+  Object.keys(categoryMap).forEach(category => {
+    const { button, input } = categoryMap[category];
+    
+    if (button) {
+      button.addEventListener('click', () => addTask(category));
+    }
+    if (input) {
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask(category);
+      });
+    }
+  });
   
   // 渲染分类标题
   renderCategoryTitles();
