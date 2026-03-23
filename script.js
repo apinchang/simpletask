@@ -798,6 +798,9 @@ function getTaskCategory(taskItem) {
 }
 
 function handleEditTask(e) {
+  // 禁用Sortable，防止编辑时移动任务
+  disableSortable();
+  
   const taskItem = e.target.closest('li');
   const category = getTaskCategory(taskItem);
   const taskId = parseInt(taskItem.dataset.id);
@@ -826,7 +829,13 @@ function saveEdit(task, newText) {
   task.text = newText.trim();
   saveTasks();
   renderAllTasks();
+  
+  // 编辑完成后重新启用Sortable
+  setTimeout(enableSortable, 100);
 }
+
+// 存储Sortable实例
+const sortableInstances = {};
 
 // 初始化SortableJS
 function initSortable(category) {
@@ -834,7 +843,7 @@ function initSortable(category) {
   if (!list) return;
   
   try {
-    new Sortable(list, {
+    sortableInstances[category] = new Sortable(list, {
       animation: 150,
       ghostClass: 'sortable-ghost',
       dragClass: 'sortable-drag',
@@ -846,6 +855,24 @@ function initSortable(category) {
   } catch (error) {
     console.error('初始化SortableJS失败:', error);
   }
+}
+
+// 禁用所有Sortable实例
+function disableSortable() {
+  Object.values(sortableInstances).forEach(instance => {
+    if (instance) {
+      instance.option('disabled', true);
+    }
+  });
+}
+
+// 启用所有Sortable实例
+function enableSortable() {
+  Object.values(sortableInstances).forEach(instance => {
+    if (instance) {
+      instance.option('disabled', false);
+    }
+  });
 }
 
 // 处理排序结束
