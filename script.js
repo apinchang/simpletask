@@ -667,6 +667,10 @@ function showHistoryModal() {
   // 插入到页面
   document.body.insertAdjacentHTML('beforeend', modalHTML);
   
+  // 显示模态框
+  const historyModal = document.getElementById('history-modal');
+  historyModal.classList.add('active');
+  
   // 绑定关闭按钮事件
   document.getElementById('close-history-modal').addEventListener('click', closeHistoryModal);
   
