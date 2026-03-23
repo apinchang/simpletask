@@ -159,7 +159,6 @@ function renderTasks(category) {
 
   list.querySelectorAll('.task-text').forEach(textElement => {
     textElement.addEventListener('dblclick', handleEditTask);
-    textElement.addEventListener('click', toggleTaskComplete);
   });
 
   // 初始化SortableJS
