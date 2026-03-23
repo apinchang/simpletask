@@ -198,6 +198,9 @@ function deleteTask(e) {
 
 // 切换任务完成状态
 function toggleTaskComplete(e) {
+  // 防止双击事件触发单击事件
+  if (e.detail > 1) return;
+  
   const taskItem = e.target.closest('li');
   const category = getTaskCategory(taskItem);
   const taskId = parseInt(taskItem.dataset.id);
@@ -207,26 +210,9 @@ function toggleTaskComplete(e) {
     const task = tasks[category][taskIndex];
     task.completed = !task.completed;
     
-    if (task.completed) {
-      // 添加到历史记录
-      const completedTask = {
-        ...task,
-        category: categoryTitles[category],
-        completedAt: Date.now()
-      };
-      
-      // 添加到historyTasks
-      historyTasks.push(completedTask);
-      
-      // 从当前任务中移除
-      tasks[category].splice(taskIndex, 1);
-      saveTasks();
-      renderTasks(category);
-      updateCategoryBadges();
-    } else {
-      saveTasks();
-      renderTasks(category);
-    }
+    saveTasks();
+    renderTasks(category);
+    updateCategoryBadges();
   }
 }
 
