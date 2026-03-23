@@ -7,40 +7,64 @@
 </head>
 <body>
   <header>
-    <h1>🏠 简单任务</h1>
-    <p>20%的工作带来80%的效益</p>
-    <!-- <nav class="nav-links">
-      <a href="history.html">📜 历史记录</a>
-    </nav> -->
+    <div class="header-left">
+      <h1>🏠 简单任务</h1>
+      <p>20%的工作带来80%的效益</p>
+    </div>
+    <div class="header-center">
+      <span class="task-count">共 <span id="total-tasks">0</span> 个任务</span>
+    </div>
+    <div class="header-right">
+      <button class="theme-button" id="theme-button">🎨 自定义配色</button>
+      <button class="header-btn" id="settings-button">⚙️</button>
+      <button class="header-btn" id="export-button">📤</button>
+      <button class="header-btn" id="import-button">�</button>
+    </div>
   </header>
 
+  <div class="board-header">
+    <h2>我的任务看板</h2>
+    <p>拖拽任务卡片可在列间移动，聚焦重要的事</p>
+  </div>
+
   <div class="categories">
-    <!-- 此处直接复用index.html的三大任务分类区块 -->
     <section class="category urgent-important">
-      <h2>🔥 重要且紧急</h2>
+      <div class="category-header">
+        <h3>🔥 重要且紧急</h3>
+        <span class="category-badge">0</span>
+      </div>
       <div class="input-group">
         <input type="text" placeholder="添加任务...">
-        <button>+</button>
+        <button class="add-button">+</button>
       </div>
       <ul class="task-list"></ul>
+      <div class="quick-add">+ 快速添加任务</div>
     </section>
 
     <section class="category important">
-      <h2>⏳ 重要不紧急</h2>
+      <div class="category-header">
+        <h3>⏳ 重要不紧急</h3>
+        <span class="category-badge">0</span>
+      </div>
       <div class="input-group">
         <input type="text" placeholder="添加任务...">
-        <button>+</button>
+        <button class="add-button">+</button>
       </div>
       <ul class="task-list"></ul>
+      <div class="quick-add">+ 快速添加任务</div>
     </section>
 
-    <section class="category">
-      <h2>📦 不重要不紧急，不干也行</h2>
+    <section class="category not-important">
+      <div class="category-header">
+        <h3>📦 不重要不紧急</h3>
+        <span class="category-badge">0</span>
+      </div>
       <div class="input-group">
         <input type="text" placeholder="添加任务...">
-        <button>+</button>
+        <button class="add-button">+</button>
       </div>
       <ul class="task-list"></ul>
+      <div class="quick-add">+ 快速添加任务</div>
     </section>
   </div>
 
@@ -48,12 +72,56 @@
     <div class="footer-content">
       <div class="copyright">© 2026 简单任务</div>
       <div class="footer-links">
-        <a href="#" id="history-link">📜 历史任务</a>
-        <a href="#" id="export-link">📤 导出</a>
-        <a href="#" id="import-link">📥 导入</a>
+        <a href="#" id="history-link">历史任务</a>
+        <a href="#" id="export-link">导出</a>
+        <a href="#" id="import-link">导入</a>
       </div>
     </div>
   </footer>
+
+  <!-- 主题选择模态框 -->
+  <div class="modal" id="theme-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>选择主题</h3>
+        <button class="close-button">×</button>
+      </div>
+      <div class="theme-options">
+        <div class="theme-option" data-theme="default">
+          <div class="theme-preview">
+            <div class="theme-color urgent">#FF6B6B</div>
+            <div class="theme-color important">#FFD166</div>
+            <div class="theme-color not-important">#06D6A0</div>
+          </div>
+          <span>默认主题</span>
+        </div>
+        <div class="theme-option" data-theme="dark">
+          <div class="theme-preview">
+            <div class="theme-color urgent">#E53935</div>
+            <div class="theme-color important">#FDD835</div>
+            <div class="theme-color not-important">#43A047</div>
+          </div>
+          <span>深色主题</span>
+        </div>
+        <div class="theme-option" data-theme="pastel">
+          <div class="theme-preview">
+            <div class="theme-color urgent">#FFB6C1</div>
+            <div class="theme-color important">#FFFFE0</div>
+            <div class="theme-color not-important">#E0FFFF</div>
+          </div>
+          <span>柔和主题</span>
+        </div>
+        <div class="theme-option" data-theme="ocean">
+          <div class="theme-preview">
+            <div class="theme-color urgent">#FF6F61</div>
+            <div class="theme-color important">#6B5B95</div>
+            <div class="theme-color not-important">#88D8B0</div>
+          </div>
+          <span>海洋主题</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="Sortable.min.js"></script>
   <script src="script.js"></script>

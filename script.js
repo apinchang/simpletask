@@ -5,6 +5,9 @@ let tasks = {
   normal: []
 };
 
+// 主题存储
+let currentTheme = 'default';
+
 // 历史任务存储
 let historyTasks = [];
 
@@ -20,22 +23,32 @@ const categoryMap = {
   urgentImportant: {
     input: document.querySelector('.urgent-important input'),
     button: document.querySelector('.urgent-important button'),
-    list: document.querySelector('.urgent-important .task-list')
+    list: document.querySelector('.urgent-important .task-list'),
+    badge: document.querySelector('.urgent-important .category-badge')
   },
   important: {
     input: document.querySelector('.important input'),
     button: document.querySelector('.important button'),
-    list: document.querySelector('.important .task-list')
+    list: document.querySelector('.important .task-list'),
+    badge: document.querySelector('.important .category-badge')
   },
   normal: {
     input: document.querySelector('.category:not(.urgent-important):not(.important) input'),
     button: document.querySelector('.category:not(.urgent-important):not(.important) button'),
-    list: document.querySelector('.category:not(.urgent-important):not(.important) .task-list')
+    list: document.querySelector('.category:not(.urgent-important):not(.important) .task-list'),
+    badge: document.querySelector('.category:not(.urgent-important):not(.important) .category-badge')
   }
 };
 
+// 主题相关元素
+const themeModal = document.getElementById('theme-modal');
+const themeButton = document.getElementById('theme-button');
+const closeButton = document.querySelector('.close-button');
+const themeOptions = document.querySelectorAll('.theme-option');
+const totalTasksElement = document.getElementById('total-tasks');
+
 // 加载保存的任务
-chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles'], (result) => {
+chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles', 'currentTheme'], (result) => {
   if (result.tasks) {
     tasks = result.tasks;
   }
@@ -46,6 +59,10 @@ chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles'], (result) =
   }
   if (result.categoryTitles) {
     categoryTitles = result.categoryTitles;
+  }
+  if (result.currentTheme) {
+    currentTheme = result.currentTheme;
+    applyTheme(currentTheme);
   }
   
   // 根据当前页面渲染对应内容
@@ -101,9 +118,12 @@ function renderTasks(category) {
   
   list.innerHTML = tasks[category].map(task => `
     <li class="task-item" data-id="${task.id}">
-      <span class="drag-icon">☰</span>
-      <span class="task-text${task.completed ? ' completed' : ''}">${task.text}</span>
-      <span class="delete-btn">×</span>
+      <div class="task-content">
+        <span class="drag-icon">☰</span>
+        <span class="task-text${task.completed ? ' completed' : ''}">${task.text}</span>
+        <span class="delete-btn">×</span>
+      </div>
+      <div class="task-date">${formatDate(task.createdAt)}</div>
     </li>
   `).join('');
 
@@ -154,10 +174,13 @@ function getTaskCategory(taskItem) {
 }
 
 function saveTasks() {
-  console.log('保存数据:', { tasks, historyTasks, categoryTitles });
-  chrome.storage.local.set({ tasks, historyTasks, categoryTitles }, () => {
+  console.log('保存数据:', { tasks, historyTasks, categoryTitles, currentTheme });
+  chrome.storage.local.set({ tasks, historyTasks, categoryTitles, currentTheme }, () => {
     console.log('数据保存完成');
   });
+  
+  // 更新任务计数
+  updateTaskCounts();
 }
 
 // 调试函数：打印存储状态
@@ -183,6 +206,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // 绑定页脚链接事件
   bindFooterLinks();
   
+  // 绑定主题相关事件
+  bindThemeEvents();
+  
+  // 绑定头部按钮事件
+  bindHeaderButtons();
+  
+  // 绑定快速添加事件
+  bindQuickAdd();
+  
+  // 更新任务计数
+  updateTaskCounts();
+  
   // 如果是历史任务页面，确保渲染历史任务
   if (document.querySelector('#history-table')) {
     console.log('检测到历史任务页面');
@@ -191,6 +226,114 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+// 绑定主题相关事件
+function bindThemeEvents() {
+  if (themeButton) {
+    themeButton.addEventListener('click', () => {
+      themeModal.classList.add('active');
+    });
+  }
+  
+  if (closeButton) {
+    closeButton.addEventListener('click', () => {
+      themeModal.classList.remove('active');
+    });
+  }
+  
+  // 点击模态框外部关闭
+  if (themeModal) {
+    themeModal.addEventListener('click', (e) => {
+      if (e.target === themeModal) {
+        themeModal.classList.remove('active');
+      }
+    });
+  }
+  
+  // 主题选项点击
+  themeOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      const theme = option.dataset.theme;
+      applyTheme(theme);
+      themeModal.classList.remove('active');
+    });
+  });
+}
+
+// 绑定头部按钮事件
+function bindHeaderButtons() {
+  // 导出按钮
+  const exportButton = document.getElementById('export-button');
+  if (exportButton) {
+    exportButton.addEventListener('click', handleExport);
+  }
+  
+  // 导入按钮
+  const importButton = document.getElementById('import-button');
+  if (importButton) {
+    importButton.addEventListener('click', handleImport);
+  }
+  
+  // 设置按钮
+  const settingsButton = document.getElementById('settings-button');
+  if (settingsButton) {
+    settingsButton.addEventListener('click', () => {
+      themeModal.classList.add('active');
+    });
+  }
+}
+
+// 绑定快速添加事件
+function bindQuickAdd() {
+  const quickAddElements = document.querySelectorAll('.quick-add');
+  quickAddElements.forEach(element => {
+    element.addEventListener('click', () => {
+      const categoryElement = element.closest('.category');
+      const input = categoryElement.querySelector('input');
+      input.focus();
+    });
+  });
+}
+
+// 应用主题
+function applyTheme(theme) {
+  currentTheme = theme;
+  document.body.setAttribute('data-theme', theme);
+  
+  // 更新主题选项的活动状态
+  themeOptions.forEach(option => {
+    if (option.dataset.theme === theme) {
+      option.classList.add('active');
+    } else {
+      option.classList.remove('active');
+    }
+  });
+  
+  saveTasks();
+}
+
+// 更新任务计数
+function updateTaskCounts() {
+  // 计算每个分类的任务数
+  const counts = {
+    urgentImportant: tasks.urgentImportant.length,
+    important: tasks.important.length,
+    normal: tasks.normal.length
+  };
+  
+  // 更新分类徽章
+  Object.keys(categoryMap).forEach(category => {
+    if (categoryMap[category].badge) {
+      categoryMap[category].badge.textContent = counts[category];
+    }
+  });
+  
+  // 更新总任务数
+  if (totalTasksElement) {
+    const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
+    totalTasksElement.textContent = total;
+  }
+}
 
 // 渲染历史任务
 function renderHistoryTasks() {
@@ -235,9 +378,9 @@ function renderHistoryTasks() {
 
 // 渲染分类标题
 function renderCategoryTitles() {
-  const urgentImportantTitle = document.querySelector('.urgent-important h2');
-  const importantTitle = document.querySelector('.important h2');
-  const normalTitle = document.querySelector('.category:not(.urgent-important):not(.important) h2');
+  const urgentImportantTitle = document.querySelector('.urgent-important h3');
+  const importantTitle = document.querySelector('.important h3');
+  const normalTitle = document.querySelector('.category:not(.urgent-important):not(.important) h3');
   
   if (urgentImportantTitle) {
     urgentImportantTitle.textContent = categoryTitles.urgentImportant;
@@ -252,7 +395,7 @@ function renderCategoryTitles() {
 
 // 绑定分类标题编辑事件
 function bindCategoryTitleEdit() {
-  const titles = document.querySelectorAll('.category h2');
+  const titles = document.querySelectorAll('.category h3');
   
   titles.forEach(title => {
     title.addEventListener('dblclick', function() {
