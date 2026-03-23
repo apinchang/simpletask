@@ -136,24 +136,29 @@ header {
   background-color: rgba(120, 119, 198, 0.1);
   color: #7877c6;
   border: 1px solid rgba(120, 119, 198, 0.3);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 0.9em;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.1em;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: var(--transition);
 }
 
 .theme-button:hover {
   background-color: rgba(120, 119, 198, 0.2);
+  transform: translateY(-1px);
 }
 
 .header-btn {
   background-color: transparent;
   border: 1px solid var(--border-color);
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  font-size: 1em;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.1em;
   cursor: pointer;
   display: flex;
   align-items: center;

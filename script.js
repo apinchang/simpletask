@@ -134,6 +134,7 @@ function renderTasks(category) {
 
   list.querySelectorAll('.task-text').forEach(textElement => {
     textElement.addEventListener('dblclick', handleEditTask);
+    textElement.addEventListener('click', toggleTaskComplete);
   });
 
   // 初始化SortableJS
@@ -158,14 +159,53 @@ function deleteTask(e) {
     // 添加到历史记录
     const historyTask = {
       ...task,
-      category: category,
-      deletedAt: new Date().toISOString()
+      category: categoryMap[category].name,
+      deletedAt: Date.now()
     };
     historyTasks.push(historyTask);
   }
   
   saveTasks();
   renderTasks(category);
+  updateCategoryBadges();
+}
+
+// 切换任务完成状态
+function toggleTaskComplete(e) {
+  const taskItem = e.target.closest('li');
+  const category = getTaskCategory(taskItem);
+  const taskId = parseInt(taskItem.dataset.id);
+  
+  const taskIndex = tasks[category].findIndex(t => t.id === taskId);
+  if (taskIndex !== -1) {
+    const task = tasks[category][taskIndex];
+    task.completed = !task.completed;
+    
+    if (task.completed) {
+      // 添加到历史记录
+      const completedTask = {
+        ...task,
+        category: categoryMap[category].name,
+        completedAt: Date.now()
+      };
+      
+      // 保存到chrome.storage.local
+      chrome.storage.local.get(['completedTasks'], function(result) {
+        const completedTasks = result.completedTasks || [];
+        completedTasks.push(completedTask);
+        chrome.storage.local.set({ completedTasks }, function() {
+          // 从当前任务中移除
+          tasks[category].splice(taskIndex, 1);
+          saveTasks();
+          renderTasks(category);
+          updateCategoryBadges();
+        });
+      });
+    } else {
+      saveTasks();
+      renderTasks(category);
+    }
+  }
 }
 
 function getTaskCategory(taskItem) {
@@ -181,6 +221,7 @@ function saveTasks() {
   
   // 更新任务计数
   updateTaskCounts();
+  updateCategoryBadges();
 }
 
 // 调试函数：打印存储状态
@@ -262,6 +303,14 @@ function bindThemeEvents() {
 
 // 绑定头部按钮事件
 function bindHeaderButtons() {
+  // 历史记录按钮
+  const historyButton = document.getElementById('history-button');
+  if (historyButton) {
+    historyButton.addEventListener('click', () => {
+      window.location.href = 'history.html';
+    });
+  }
+  
   // 导出按钮
   const exportButton = document.getElementById('export-button');
   if (exportButton) {

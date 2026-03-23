@@ -2,102 +2,153 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>历史任务 - 简单任务</title>
   <link rel="stylesheet" href="styles.css">
   <style>
+    body {
+      padding: 20px;
+    }
+    
     .history-container {
       max-width: 800px;
       margin: 0 auto;
     }
     
-    #history-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    
-    #history-table th,
-    #history-table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-    
-    #history-table th {
-      background-color: #f9f9f9;
-      font-weight: bold;
-    }
-    
-    .action-buttons {
-      display: flex;
+    .back-button {
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
-    }
-    
-    .btn {
-      padding: 4px 8px;
-      border: none;
-      border-radius: 4px;
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 8px;
       cursor: pointer;
+      transition: var(--transition);
+      margin-bottom: 20px;
+    }
+    
+    .back-button:hover {
+      background-color: rgba(0,0,0,0.05);
+    }
+    
+    .history-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .history-item {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+    
+    .history-item:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
+    }
+    
+    .history-item-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    .history-item-text {
+      flex: 1;
+      margin-right: 16px;
+    }
+    
+    .history-item-meta {
+      text-align: right;
       font-size: 0.8em;
-    }
-    
-    .btn-recover {
-      background-color: #27ae60;
-      color: white;
-    }
-    
-    .btn-delete {
-      background-color: #e74c3c;
-      color: white;
-    }
-    
-    .btn:hover {
-      opacity: 0.8;
+      color: var(--text-secondary);
     }
     
     .empty-state {
       text-align: center;
       padding: 60px 20px;
-      color: #7f8c8d;
+      color: var(--text-secondary);
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>📜 历史任务</h1>
-    <p>已删除的任务记录</p>
-    <nav class="nav-links">
-      <a href="newtab.html">🏠 返回主页</a>
-    </nav>
-  </header>
-
   <div class="history-container">
-    <table id="history-table">
-      <thead>
-        <tr>
-          <th>任务内容</th>
-          <th>创建时间</th>
-          <th>删除时间</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- 历史任务将通过JavaScript动态添加 -->
-      </tbody>
-    </table>
-  </div>
-
-  <footer>
-    <div class="footer-content">
-      <div class="copyright">© 2026 简单任务</div>
-      <div class="footer-links">
-        <a href="newtab.html">🏠 主页</a>
-        <a href="#" id="export-link">📤 导出</a>
-        <a href="#" id="import-link">📥 导入</a>
-      </div>
+    <button class="back-button" onclick="window.location.href='newtab.html'">
+      ← 返回任务看板
+    </button>
+    
+    <h1>📜 历史任务</h1>
+    <p>已完成的任务记录</p>
+    
+    <ul class="history-list" id="history-list">
+      <!-- 历史任务将通过JavaScript动态添加 -->
+    </ul>
+    
+    <div class="empty-state" id="empty-state">
+      <p>暂无历史任务记录</p>
     </div>
-  </footer>
-
-  <script src="script.js"></script>
+  </div>
+  
+  <script>
+    // 加载历史任务
+    function loadHistory() {
+      chrome.storage.local.get(['completedTasks'], function(result) {
+        const completedTasks = result.completedTasks || [];
+        const historyList = document.getElementById('history-list');
+        const emptyState = document.getElementById('empty-state');
+        
+        if (completedTasks.length === 0) {
+          emptyState.style.display = 'block';
+          historyList.style.display = 'none';
+          return;
+        }
+        
+        emptyState.style.display = 'none';
+        historyList.style.display = 'block';
+        
+        // 按时间倒序排序
+        completedTasks.sort((a, b) => b.completedAt - a.completedAt);
+        
+        // 清空列表
+        historyList.innerHTML = '';
+        
+        // 添加历史任务
+        completedTasks.forEach(task => {
+          const li = document.createElement('li');
+          li.className = 'history-item';
+          
+          const formattedDate = new Date(task.completedAt).toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          
+          li.innerHTML = `
+            <div class="history-item-content">
+              <div class="history-item-text">
+                <p>${task.text}</p>
+              </div>
+              <div class="history-item-meta">
+                <div>${task.category}</div>
+                <div>${formattedDate}</div>
+              </div>
+            </div>
+          `;
+          
+          historyList.appendChild(li);
+        });
+      });
+    }
+    
+    // 页面加载时加载历史任务
+    document.addEventListener('DOMContentLoaded', loadHistory);
+  </script>
 </body>
 </html>
