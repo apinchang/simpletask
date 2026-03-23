@@ -33,6 +33,13 @@ function loadSavedData() {
   chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles', 'currentTheme'], (result) => {
     if (result.tasks) {
       tasks = result.tasks;
+    } else {
+      // 确保tasks对象结构完整
+      tasks = {
+        urgentImportant: [],
+        important: [],
+        normal: []
+      };
     }
     if (result.historyTasks) {
       historyTasks = result.historyTasks;
@@ -270,9 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 加载保存的数据
   loadSavedData();
   
-  // 更新任务计数
-  updateTaskCounts();
-  
   // 如果是历史任务页面，确保渲染历史任务
   if (document.querySelector('#history-table')) {
     console.log('检测到历史任务页面');
@@ -356,7 +360,10 @@ function applyTheme(theme) {
     }
   });
   
-  saveTasks();
+  // 只在tasks对象有数据时保存，避免覆盖现有数据
+  if (tasks && (tasks.urgentImportant || tasks.important || tasks.normal)) {
+    saveTasks();
+  }
 }
 
 // 更新任务计数
