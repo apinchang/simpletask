@@ -34,65 +34,7 @@
   --primary-hover: #4f46e5;
 }
 
-/* 深色主题 */
-body[data-theme="dark"] {
-  --primary-bg: #121212;
-  --header-bg: #1e1e1e;
-  --card-bg: #2d2d2d;
-  --card-list-bg: #252525;
-  --text-primary: #e0e0e0;
-  --text-secondary: #9e9e9e;
-  --border-color: #3a3a3a;
-  --shadow: 0 4px 12px rgba(0,0,0,0.3);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,0.4);
-  
-  --urgent-color: #ff6b6b;
-  --important-color: #ffd166;
-  --not-important-color: #06d6a0;
-  
-  --primary-color: #818cf8;
-  --primary-hover: #6366f1;
-}
 
-/* 柔和主题 */
-body[data-theme="pastel"] {
-  --primary-bg: #f9f7fd;
-  --header-bg: #ffffff;
-  --card-bg: #ffffff;
-  --card-list-bg: #f3f0ff;
-  --text-primary: #333333;
-  --text-secondary: #666666;
-  --border-color: #e0e0e0;
-  --shadow: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
-  
-  --urgent-color: #ffcdd2;
-  --important-color: #fff3cd;
-  --not-important-color: #d4edda;
-  
-  --primary-color: #9c27b0;
-  --primary-hover: #7b1fa2;
-}
-
-/* 海洋主题 */
-body[data-theme="ocean"] {
-  --primary-bg: #f0f9ff;
-  --header-bg: #ffffff;
-  --card-bg: #ffffff;
-  --card-list-bg: #e6f7ff;
-  --text-primary: #1e3a5f;
-  --text-secondary: #4b6a9b;
-  --border-color: #e0e0e0;
-  --shadow: 0 4px 12px rgba(0,0,0,0.08);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
-  
-  --urgent-color: #ff6f61;
-  --important-color: #6b5b95;
-  --not-important-color: #88d8b0;
-  
-  --primary-color: #3b82f6;
-  --primary-hover: #2563eb;
-}
 
 /* 基础样式 */
 * {
@@ -278,7 +220,6 @@ header {
 }
 
 .category:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
 }
 
@@ -626,67 +567,7 @@ footer {
   box-shadow: var(--shadow-hover);
 }
 
-.theme-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 20px;
-}
 
-.theme-option {
-  cursor: pointer;
-  text-align: center;
-  padding: 20px;
-  border-radius: var(--border-radius);
-  border: 2px solid var(--border-color);
-  transition: var(--transition);
-  background-color: var(--card-bg);
-  box-shadow: var(--shadow);
-}
-
-.theme-option:hover {
-  border-color: var(--primary-color);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
-}
-
-.theme-option.active {
-  border-color: var(--primary-color);
-  background-color: rgba(99, 102, 241, 0.1);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-}
-
-.theme-preview {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 12px;
-  height: 40px;
-  border-radius: var(--button-radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.theme-color {
-  flex: 1;
-  border-radius: 0;
-}
-
-.theme-color.urgent {
-  background-color: var(--urgent-color);
-}
-
-.theme-color.important {
-  background-color: var(--important-color);
-}
-
-.theme-color.not-important {
-  background-color: var(--not-important-color);
-}
-
-.theme-option span {
-  font-size: 0.95em;
-  color: var(--text-primary);
-  font-weight: 600;
-}
 
 /* SortableJS 拖动样式 */
 .sortable-ghost {

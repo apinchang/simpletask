@@ -5,9 +5,6 @@ let tasks = {
   normal: []
 };
 
-// 主题存储
-let currentTheme = 'default';
-
 // 历史任务存储
 let historyTasks = [];
 
@@ -21,11 +18,7 @@ let categoryTitles = {
 // DOM元素
 let categoryMap;
 
-// 主题相关元素
-const themeModal = document.getElementById('theme-modal');
-const themeButton = document.getElementById('theme-button');
-const closeButton = document.querySelector('.close-button');
-const themeOptions = document.querySelectorAll('.theme-option');
+// 头部按钮元素
 const totalTasksElement = document.getElementById('total-tasks');
 
 // 加载保存的任务
@@ -33,7 +26,7 @@ function loadSavedData() {
   console.log('开始加载数据...');
   
   // 使用同步加载方式，确保数据加载完成后再渲染
-  chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles', 'currentTheme'], (result) => {
+  chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles'], (result) => {
     console.log('从存储中获取所有数据:', result);
     
     // 初始化tasks
@@ -72,18 +65,10 @@ function loadSavedData() {
       categoryTitles = result.categoryTitles;
     }
     
-    // 初始化currentTheme
-    if (result.currentTheme) {
-      console.log('加载保存的currentTheme:', result.currentTheme);
-      currentTheme = result.currentTheme;
-      applyTheme(currentTheme);
-    }
-    
     console.log('加载完成后的数据:', {
       tasks: tasks,
       historyTasks: historyTasks,
-      categoryTitles: categoryTitles,
-      currentTheme: currentTheme
+      categoryTitles: categoryTitles
     });
     
     // 渲染所有任务（仅在主页面）
@@ -244,8 +229,7 @@ function saveTasks() {
   const dataToSave = {
     tasks: tasks,
     historyTasks: historyTasks,
-    categoryTitles: categoryTitles,
-    currentTheme: currentTheme
+    categoryTitles: categoryTitles
   };
   
   console.log('要保存的数据:', dataToSave);
@@ -383,38 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 绑定主题相关事件
-function bindThemeEvents() {
-  if (themeButton) {
-    themeButton.addEventListener('click', () => {
-      themeModal.classList.add('active');
-    });
-  }
-  
-  if (closeButton) {
-    closeButton.addEventListener('click', () => {
-      themeModal.classList.remove('active');
-    });
-  }
-  
-  // 点击模态框外部关闭
-  if (themeModal) {
-    themeModal.addEventListener('click', (e) => {
-      if (e.target === themeModal) {
-        themeModal.classList.remove('active');
-      }
-    });
-  }
-  
-  // 主题选项点击
-  themeOptions.forEach(option => {
-    option.addEventListener('click', () => {
-      const theme = option.dataset.theme;
-      applyTheme(theme);
-      themeModal.classList.remove('active');
-    });
-  });
-}
+
 
 // 绑定头部按钮事件
 function bindHeaderButtons() {
@@ -443,25 +396,7 @@ function bindHeaderButtons() {
 
 
 
-// 应用主题
-function applyTheme(theme) {
-  currentTheme = theme;
-  document.body.setAttribute('data-theme', theme);
-  
-  // 更新主题选项的活动状态
-  themeOptions.forEach(option => {
-    if (option.dataset.theme === theme) {
-      option.classList.add('active');
-    } else {
-      option.classList.remove('active');
-    }
-  });
-  
-  // 只在tasks对象有数据时保存，避免覆盖现有数据
-  if (tasks && (tasks.urgentImportant || tasks.important || tasks.normal)) {
-    saveTasks();
-  }
-}
+
 
 // 更新任务计数
 function updateTaskCounts() {
