@@ -420,7 +420,7 @@ function bindHeaderButtons() {
   const historyButton = document.getElementById('history-button');
   if (historyButton) {
     historyButton.addEventListener('click', () => {
-      window.location.href = 'history.html';
+      showHistoryModal();
     });
   }
   
@@ -618,6 +618,151 @@ function formatDate(dateString) {
     month: '2-digit',
     day: '2-digit'
   });
+}
+
+// 显示历史记录弹窗
+function showHistoryModal() {
+  // 创建模态弹窗HTML
+  const modalHTML = `
+    <div id="history-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>历史记录</h3>
+          <button id="close-history-modal" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          ${historyTasks.length === 0 ? 
+            '<p class="empty-state">暂无历史任务</p>' : 
+            `
+            <div class="history-header">
+              <button id="delete-all-history" class="btn btn-danger">全部删除</button>
+            </div>
+            <ul id="history-list" class="history-list">
+              ${historyTasks.map(task => `
+                <li class="history-item" data-id="${task.id}">
+                  <div class="history-content">
+                    <div class="history-text">${task.text}</div>
+                    <div class="history-meta">
+                      <span class="history-category">${task.category}</span>
+                      <span class="history-date">
+                        创建: ${formatDate(task.createdAt || new Date(task.id).toISOString())}<br>
+                        删除: ${formatDate(task.deletedAt)}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="history-actions">
+                    <button class="btn btn-recover" data-id="${task.id}">恢复</button>
+                    <button class="btn btn-delete" data-id="${task.id}">彻底删除</button>
+                  </div>
+                </li>
+              `).join('')}
+            </ul>
+            `
+          }
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 插入到页面
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+  
+  // 绑定关闭按钮事件
+  document.getElementById('close-history-modal').addEventListener('click', closeHistoryModal);
+  
+  // 绑定恢复按钮事件
+  document.querySelectorAll('.btn-recover').forEach(btn => {
+    btn.addEventListener('click', recoverTaskFromModal);
+  });
+  
+  // 绑定彻底删除按钮事件
+  document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', deleteHistoryTask);
+  });
+  
+  // 绑定全部删除按钮事件
+  const deleteAllBtn = document.getElementById('delete-all-history');
+  if (deleteAllBtn) {
+    deleteAllBtn.addEventListener('click', confirmDeleteAllHistory);
+  }
+  
+  // 点击模态框外部关闭
+  document.getElementById('history-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'history-modal') {
+      closeHistoryModal();
+    }
+  });
+}
+
+// 关闭历史记录弹窗
+function closeHistoryModal() {
+  const modal = document.getElementById('history-modal');
+  if (modal) {
+    modal.remove();
+  }
+}
+
+// 从弹窗恢复任务
+function recoverTaskFromModal(e) {
+  const taskId = parseInt(e.target.dataset.id);
+  const taskIndex = historyTasks.findIndex(t => t.id === taskId);
+  
+  if (taskIndex !== -1) {
+    const task = historyTasks[taskIndex];
+    
+    // 从历史记录中删除
+    historyTasks.splice(taskIndex, 1);
+    
+    // 确定任务应该恢复到哪个分类
+    let targetCategory = 'normal';
+    if (task.category.includes('重要且紧急')) {
+      targetCategory = 'urgentImportant';
+    } else if (task.category.includes('重要不紧急')) {
+      targetCategory = 'important';
+    }
+    
+    // 恢复到任务列表
+    tasks[targetCategory].push({
+      id: task.id,
+      text: task.text,
+      completed: task.completed,
+      createdAt: task.createdAt || new Date(task.id).toISOString()
+    });
+    
+    saveTasks();
+    renderAllTasks();
+    
+    // 重新显示弹窗
+    closeHistoryModal();
+    showHistoryModal();
+  }
+}
+
+// 删除历史任务
+function deleteHistoryTask(e) {
+  const taskId = parseInt(e.target.dataset.id);
+  const taskIndex = historyTasks.findIndex(t => t.id === taskId);
+  
+  if (taskIndex !== -1) {
+    // 从历史记录中移除
+    historyTasks.splice(taskIndex, 1);
+    
+    saveTasks();
+    
+    // 重新显示弹窗
+    closeHistoryModal();
+    showHistoryModal();
+  }
+}
+
+// 确认删除所有历史记录
+function confirmDeleteAllHistory() {
+  if (confirm('确定要删除所有历史记录吗？此操作不可恢复。')) {
+    historyTasks = [];
+    saveTasks();
+    closeHistoryModal();
+    showHistoryModal();
+  }
 }
 
 // 恢复任务
