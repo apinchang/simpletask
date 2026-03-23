@@ -22,19 +22,19 @@ let categoryTitles = {
 const categoryMap = {
   urgentImportant: {
     input: document.querySelector('.urgent-important input'),
-    button: document.querySelector('.urgent-important button'),
+    button: document.querySelector('.urgent-important .add-button'),
     list: document.querySelector('.urgent-important .task-list'),
     badge: document.querySelector('.urgent-important .category-badge')
   },
   important: {
     input: document.querySelector('.important input'),
-    button: document.querySelector('.important button'),
+    button: document.querySelector('.important .add-button'),
     list: document.querySelector('.important .task-list'),
     badge: document.querySelector('.important .category-badge')
   },
   normal: {
     input: document.querySelector('.category:not(.urgent-important):not(.important) input'),
-    button: document.querySelector('.category:not(.urgent-important):not(.important) button'),
+    button: document.querySelector('.category:not(.urgent-important):not(.important) .add-button'),
     list: document.querySelector('.category:not(.urgent-important):not(.important) .task-list'),
     badge: document.querySelector('.category:not(.urgent-important):not(.important) .category-badge')
   }
