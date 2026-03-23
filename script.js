@@ -145,7 +145,6 @@ function renderTasks(category) {
   list.innerHTML = tasks[category].map(task => `
     <li class="task-item" data-id="${task.id}">
       <div class="task-content">
-        <span class="drag-icon">☰</span>
         <span class="task-text${task.completed ? ' completed' : ''}">${task.text}</span>
         <span class="delete-btn">×</span>
       </div>
