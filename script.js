@@ -297,6 +297,34 @@ function dumpStorage() {
   });
 }
 
+// 测试存储操作
+function testStorage() {
+  console.log('开始测试存储操作...');
+  
+  // 测试写入
+  const testData = {
+    test: 'test value',
+    timestamp: Date.now()
+  };
+  
+  chrome.storage.local.set(testData, (error) => {
+    if (error) {
+      console.error('测试写入失败:', error);
+    } else {
+      console.log('测试写入成功');
+      
+      // 测试读取
+      chrome.storage.local.get('test', (result) => {
+        if (result.test) {
+          console.log('测试读取成功:', result.test);
+        } else {
+          console.error('测试读取失败');
+        }
+      });
+    }
+  });
+}
+
 // 初始化渲染
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM加载完成，当前页面:', window.location.href);
@@ -356,6 +384,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // 绑定快速添加事件
   bindQuickAdd();
+  
+  // 测试存储操作
+  testStorage();
   
   // 加载保存的数据
   loadSavedData();
