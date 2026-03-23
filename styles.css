@@ -299,7 +299,7 @@ input[type="text"]:focus {
 
 .add-button {
   position: absolute;
-  right: 4px;
+  right: 2px;
   top: 50%;
   transform: translateY(-50%);
   background-color: #7877c6;
@@ -351,10 +351,7 @@ input[type="text"]:focus {
   cursor: move;
 }
 
-.task-item:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transform: translateY(-1px);
-}
+
 
 .task-content {
   display: flex;
