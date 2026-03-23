@@ -615,8 +615,8 @@ function bindCategoryTitleEdit() {
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit'
+    month: '2-digit',
+    day: '2-digit'
   });
 }
 
@@ -847,27 +847,7 @@ function initSortable(category) {
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
         group: 'tasks',
-        onStart: function(evt) {
-          // 拖动开始时添加拖动类
-          evt.item.classList.add('dragging');
-        },
-        onAdd: function(evt) {
-          // 拖动结束后移除拖动类
-          evt.item.classList.remove('dragging');
-        },
-        onOver: function(evt) {
-          // 拖动经过时添加drag-over类
-          evt.target.closest('.task-list').classList.add('drag-over');
-        },
-        onOut: function(evt) {
-          // 拖动离开时移除drag-over类
-          evt.target.closest('.task-list').classList.remove('drag-over');
-        },
         onEnd: function(evt) {
-          // 拖动结束时移除所有drag-over类
-          document.querySelectorAll('.task-list').forEach(list => {
-            list.classList.remove('drag-over');
-          });
           handleSortEnd(evt);
         }
       });
@@ -878,27 +858,7 @@ function initSortable(category) {
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
         group: 'tasks',
-        onStart: function(evt) {
-          // 拖动开始时添加拖动类
-          evt.item.classList.add('dragging');
-        },
-        onAdd: function(evt) {
-          // 拖动结束后移除拖动类
-          evt.item.classList.remove('dragging');
-        },
-        onOver: function(evt) {
-          // 拖动经过时添加drag-over类
-          evt.target.closest('.task-list').classList.add('drag-over');
-        },
-        onOut: function(evt) {
-          // 拖动离开时移除drag-over类
-          evt.target.closest('.task-list').classList.remove('drag-over');
-        },
         onEnd: function(evt) {
-          // 拖动结束时移除所有drag-over类
-          document.querySelectorAll('.task-list').forEach(list => {
-            list.classList.remove('drag-over');
-          });
           handleSortEnd(evt);
         }
       });
