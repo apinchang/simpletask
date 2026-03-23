@@ -136,10 +136,10 @@ header {
   background-color: rgba(120, 119, 198, 0.1);
   color: #7877c6;
   border: 1px solid rgba(120, 119, 198, 0.3);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  font-size: 1.1em;
+  font-size: 1.3em;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -153,22 +153,22 @@ header {
 }
 
 .header-btn {
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  width: 40px;
-  height: 40px;
+  background-color: rgba(120, 119, 198, 0.1);
+  color: #7877c6;
+  border: 1px solid rgba(120, 119, 198, 0.3);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  font-size: 1.1em;
+  font-size: 1.3em;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition);
-  color: var(--text-primary);
 }
 
 .header-btn:hover {
-  background-color: rgba(0,0,0,0.05);
+  background-color: rgba(120, 119, 198, 0.2);
   transform: translateY(-1px);
 }
 
