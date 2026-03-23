@@ -382,9 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 绑定头部按钮事件
   bindHeaderButtons();
   
-  // 绑定快速添加事件
-  bindQuickAdd();
-  
   // 测试存储操作
   testStorage();
   
