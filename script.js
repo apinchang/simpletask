@@ -19,26 +19,7 @@ let categoryTitles = {
 };
 
 // DOM元素
-const categoryMap = {
-  urgentImportant: {
-    input: document.querySelector('.urgent-important input'),
-    button: document.querySelector('.urgent-important .add-button'),
-    list: document.querySelector('.urgent-important .task-list'),
-    badge: document.querySelector('.urgent-important .category-badge')
-  },
-  important: {
-    input: document.querySelector('.important input'),
-    button: document.querySelector('.important .add-button'),
-    list: document.querySelector('.important .task-list'),
-    badge: document.querySelector('.important .category-badge')
-  },
-  normal: {
-    input: document.querySelector('.category:not(.urgent-important):not(.important) input'),
-    button: document.querySelector('.category:not(.urgent-important):not(.important) .add-button'),
-    list: document.querySelector('.category:not(.urgent-important):not(.important) .task-list'),
-    badge: document.querySelector('.category:not(.urgent-important):not(.important) .category-badge')
-  }
-};
+let categoryMap;
 
 // 主题相关元素
 const themeModal = document.getElementById('theme-modal');
@@ -48,28 +29,32 @@ const themeOptions = document.querySelectorAll('.theme-option');
 const totalTasksElement = document.getElementById('total-tasks');
 
 // 加载保存的任务
-chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles', 'currentTheme'], (result) => {
-  if (result.tasks) {
-    tasks = result.tasks;
-  }
-  if (result.historyTasks) {
-    historyTasks = result.historyTasks;
-  } else {
-    historyTasks = [];
-  }
-  if (result.categoryTitles) {
-    categoryTitles = result.categoryTitles;
-  }
-  if (result.currentTheme) {
-    currentTheme = result.currentTheme;
-    applyTheme(currentTheme);
-  }
-  
-  // 渲染所有任务（仅在主页面）
-  if (!document.querySelector('#history-list')) {
-    renderAllTasks();
-  }
-});
+function loadSavedData() {
+  chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles', 'currentTheme'], (result) => {
+    if (result.tasks) {
+      tasks = result.tasks;
+    }
+    if (result.historyTasks) {
+      historyTasks = result.historyTasks;
+    } else {
+      historyTasks = [];
+    }
+    if (result.categoryTitles) {
+      categoryTitles = result.categoryTitles;
+    }
+    if (result.currentTheme) {
+      currentTheme = result.currentTheme;
+      applyTheme(currentTheme);
+    }
+    
+    console.log('加载保存的数据:', tasks);
+    
+    // 渲染所有任务（仅在主页面）
+    if (!document.querySelector('#history-list')) {
+      renderAllTasks();
+    }
+  });
+}
 
 function addTask(category) {
   const input = categoryMap[category].input;
@@ -226,6 +211,30 @@ function dumpStorage() {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('DOM加载完成，当前页面:', window.location.href);
   
+  // 初始化categoryMap
+  categoryMap = {
+    urgentImportant: {
+      input: document.querySelector('.urgent-important input'),
+      button: document.querySelector('.urgent-important .add-button'),
+      list: document.querySelector('.urgent-important .task-list'),
+      badge: document.querySelector('.urgent-important .category-badge')
+    },
+    important: {
+      input: document.querySelector('.important input'),
+      button: document.querySelector('.important .add-button'),
+      list: document.querySelector('.important .task-list'),
+      badge: document.querySelector('.important .category-badge')
+    },
+    normal: {
+      input: document.querySelector('.category:not(.urgent-important):not(.important) input'),
+      button: document.querySelector('.category:not(.urgent-important):not(.important) .add-button'),
+      list: document.querySelector('.category:not(.urgent-important):not(.important) .task-list'),
+      badge: document.querySelector('.category:not(.urgent-important):not(.important) .category-badge')
+    }
+  };
+  
+  console.log('categoryMap初始化:', categoryMap);
+  
   // 为每个分类绑定事件
   Object.keys(categoryMap).forEach(category => {
     const { button, input } = categoryMap[category];
@@ -257,6 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // 绑定快速添加事件
   bindQuickAdd();
+  
+  // 加载保存的数据
+  loadSavedData();
   
   // 更新任务计数
   updateTaskCounts();
