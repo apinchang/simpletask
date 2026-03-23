@@ -20,8 +20,8 @@
   --padding: 20px;
   
   /* 圆角 */
-  --border-radius: 12px;
-  --card-radius: 10px;
+  --border-radius: 5px;
+  --card-radius: 5px;
   
   /* 动画 */
   --transition: all 0.3s ease;
@@ -96,7 +96,7 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: 16px 0;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   transition: var(--transition);
 }
 
@@ -398,13 +398,20 @@ input[type="text"]:focus {
 }
 
 .delete-btn {
-  color: #e74c3c;
+  background-color: #f8d7da;
+  color: #721c24;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px;
   border-radius: 4px;
   font-size: 1em;
   transition: var(--transition);
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
 }
 
 .task-date {
@@ -416,7 +423,8 @@ input[type="text"]:focus {
 }
 
 .delete-btn:hover {
-  background-color: rgba(231, 76, 60, 0.1);
+  background-color: #f5c6cb;
+  color: #721c24;
 }
 
 

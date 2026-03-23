@@ -614,10 +614,9 @@ function bindCategoryTitleEdit() {
 // 格式化日期
 function formatDate(dateString) {
   const date = new Date(dateString);
-  return date.toLocaleString('zh-CN', {
-    month: '2-digit',
-    day: '2-digit'
-  });
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${month}月${day}日`;
 }
 
 // 显示历史记录弹窗
