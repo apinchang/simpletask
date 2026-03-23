@@ -94,10 +94,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--header-bg);
-  padding: 16px 24px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
+  padding: 16px 0;
   margin-bottom: 30px;
   transition: var(--transition);
 }
@@ -194,14 +191,15 @@ header {
   display: flex;
   gap: var(--gap);
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   margin-bottom: 40px;
+  width: 100%;
+  max-width: var(--page-width);
 }
 
 .category {
   flex: 1;
-  min-width: 320px;
-  max-width: 400px;
+  min-width: 300px;
   background-color: var(--card-bg);
   border-radius: var(--card-radius);
   box-shadow: var(--shadow);
