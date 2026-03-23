@@ -838,7 +838,6 @@ function initSortable(category) {
   try {
     new Sortable(list, {
       animation: 150,
-      handle: '.drag-icon',
       ghostClass: 'sortable-ghost',
       dragClass: 'sortable-drag',
       group: 'tasks',
