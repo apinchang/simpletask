@@ -31,15 +31,12 @@ const totalTasksElement = document.getElementById('total-tasks');
 // 加载保存的任务
 function loadSavedData() {
   console.log('开始加载数据...');
-  chrome.storage.local.get(['tasks', 'historyTasks', 'categoryTitles', 'currentTheme'], (result) => {
-    console.log('从存储中获取数据:', result);
-    
+  // 分别加载每个数据项，确保可靠性
+  chrome.storage.local.get('tasks', (result) => {
+    console.log('加载tasks:', result.tasks);
     if (result.tasks) {
-      console.log('加载保存的tasks:', result.tasks);
       tasks = result.tasks;
     } else {
-      // 确保tasks对象结构完整
-      console.log('没有保存的tasks，使用默认值');
       tasks = {
         urgentImportant: [],
         important: [],
@@ -47,29 +44,34 @@ function loadSavedData() {
       };
     }
     
-    // 确保tasks对象结构正确
-    if (!tasks.urgentImportant) tasks.urgentImportant = [];
-    if (!tasks.important) tasks.important = [];
-    if (!tasks.normal) tasks.normal = [];
-    
-    if (result.historyTasks) {
-      historyTasks = result.historyTasks;
-    } else {
-      historyTasks = [];
-    }
-    if (result.categoryTitles) {
-      categoryTitles = result.categoryTitles;
-    }
-    if (result.currentTheme) {
-      currentTheme = result.currentTheme;
-      applyTheme(currentTheme);
-    }
+    // 确保结构正确
+    if (!Array.isArray(tasks.urgentImportant)) tasks.urgentImportant = [];
+    if (!Array.isArray(tasks.important)) tasks.important = [];
+    if (!Array.isArray(tasks.normal)) tasks.normal = [];
     
     console.log('加载完成后的数据:', tasks);
     
     // 渲染所有任务（仅在主页面）
     if (!document.querySelector('#history-list')) {
       renderAllTasks();
+    }
+  });
+  
+  // 加载其他数据
+  chrome.storage.local.get('historyTasks', (result) => {
+    historyTasks = result.historyTasks || [];
+  });
+  
+  chrome.storage.local.get('categoryTitles', (result) => {
+    if (result.categoryTitles) {
+      categoryTitles = result.categoryTitles;
+    }
+  });
+  
+  chrome.storage.local.get('currentTheme', (result) => {
+    if (result.currentTheme) {
+      currentTheme = result.currentTheme;
+      applyTheme(currentTheme);
     }
   });
 }
@@ -196,18 +198,14 @@ function toggleTaskComplete(e) {
         completedAt: Date.now()
       };
       
-      // 保存到chrome.storage.local
-      chrome.storage.local.get(['completedTasks'], function(result) {
-        const completedTasks = result.completedTasks || [];
-        completedTasks.push(completedTask);
-        chrome.storage.local.set({ completedTasks }, function() {
-          // 从当前任务中移除
-          tasks[category].splice(taskIndex, 1);
-          saveTasks();
-          renderTasks(category);
-          updateCategoryBadges();
-        });
-      });
+      // 添加到historyTasks
+      historyTasks.push(completedTask);
+      
+      // 从当前任务中移除
+      tasks[category].splice(taskIndex, 1);
+      saveTasks();
+      renderTasks(category);
+      updateCategoryBadges();
     } else {
       saveTasks();
       renderTasks(category);
@@ -222,7 +220,7 @@ function getTaskCategory(taskItem) {
 
 function saveTasks() {
   console.log('开始保存数据...');
-  console.log('要保存的数据:', { tasks, historyTasks, categoryTitles, currentTheme });
+  console.log('要保存的tasks:', tasks);
   
   // 确保tasks对象结构完整
   if (!tasks) {
@@ -234,21 +232,47 @@ function saveTasks() {
   }
   
   // 确保tasks对象结构正确
-  if (!tasks.urgentImportant) tasks.urgentImportant = [];
-  if (!tasks.important) tasks.important = [];
-  if (!tasks.normal) tasks.normal = [];
+  if (!Array.isArray(tasks.urgentImportant)) tasks.urgentImportant = [];
+  if (!Array.isArray(tasks.important)) tasks.important = [];
+  if (!Array.isArray(tasks.normal)) tasks.normal = [];
   
   console.log('修正后的数据:', tasks);
   
-  chrome.storage.local.set({ tasks, historyTasks, categoryTitles, currentTheme }, (error) => {
+  // 单独保存tasks，确保可靠性
+  chrome.storage.local.set({ tasks }, (error) => {
     if (error) {
-      console.error('数据保存失败:', error);
+      console.error('保存tasks失败:', error);
     } else {
-      console.log('数据保存完成');
+      console.log('tasks保存成功');
       // 验证保存是否成功
-      chrome.storage.local.get(['tasks'], (result) => {
-        console.log('保存后验证数据:', result.tasks);
+      chrome.storage.local.get('tasks', (result) => {
+        console.log('保存后验证tasks:', result.tasks);
       });
+    }
+  });
+  
+  // 保存其他数据
+  chrome.storage.local.set({ historyTasks }, (error) => {
+    if (error) {
+      console.error('保存historyTasks失败:', error);
+    } else {
+      console.log('historyTasks保存成功');
+    }
+  });
+  
+  chrome.storage.local.set({ categoryTitles }, (error) => {
+    if (error) {
+      console.error('保存categoryTitles失败:', error);
+    } else {
+      console.log('categoryTitles保存成功');
+    }
+  });
+  
+  chrome.storage.local.set({ currentTheme }, (error) => {
+    if (error) {
+      console.error('保存currentTheme失败:', error);
+    } else {
+      console.log('currentTheme保存成功');
     }
   });
   

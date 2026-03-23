@@ -78,7 +78,7 @@
 </head>
 <body>
   <div class="history-container">
-    <button class="back-button" onclick="window.location.href='newtab.html'">
+    <button class="back-button" onclick="window.location.href='chrome://newtab'">
       ← 返回任务看板
     </button>
     
@@ -97,12 +97,12 @@
   <script>
     // 加载历史任务
     function loadHistory() {
-      chrome.storage.local.get(['completedTasks'], function(result) {
-        const completedTasks = result.completedTasks || [];
+      chrome.storage.local.get(['historyTasks'], function(result) {
+        const historyTasks = result.historyTasks || [];
         const historyList = document.getElementById('history-list');
         const emptyState = document.getElementById('empty-state');
         
-        if (completedTasks.length === 0) {
+        if (historyTasks.length === 0) {
           emptyState.style.display = 'block';
           historyList.style.display = 'none';
           return;
@@ -112,17 +112,22 @@
         historyList.style.display = 'block';
         
         // 按时间倒序排序
-        completedTasks.sort((a, b) => b.completedAt - a.completedAt);
+        historyTasks.sort((a, b) => {
+          const dateA = a.completedAt || a.deletedAt || 0;
+          const dateB = b.completedAt || b.deletedAt || 0;
+          return dateB - dateA;
+        });
         
         // 清空列表
         historyList.innerHTML = '';
         
         // 添加历史任务
-        completedTasks.forEach(task => {
+        historyTasks.forEach(task => {
           const li = document.createElement('li');
           li.className = 'history-item';
           
-          const formattedDate = new Date(task.completedAt).toLocaleString('zh-CN', {
+          const date = task.completedAt || task.deletedAt;
+          const formattedDate = new Date(date).toLocaleString('zh-CN', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
