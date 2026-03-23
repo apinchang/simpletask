@@ -394,22 +394,7 @@ input[type="text"]:focus {
   background-color: rgba(231, 76, 60, 0.1);
 }
 
-/* 快速添加 */
-.quick-add {
-  text-align: center;
-  padding: 12px;
-  border-radius: 8px;
-  background-color: rgba(120, 119, 198, 0.05);
-  color: #7877c6;
-  font-size: 0.9em;
-  cursor: pointer;
-  transition: var(--transition);
-  border: 1px dashed rgba(120, 119, 198, 0.3);
-}
 
-.quick-add:hover {
-  background-color: rgba(120, 119, 198, 0.1);
-}
 
 /* 页脚样式 */
 footer {

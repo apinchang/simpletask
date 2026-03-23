@@ -274,26 +274,10 @@ function bindHeaderButtons() {
     importButton.addEventListener('click', handleImport);
   }
   
-  // 设置按钮
-  const settingsButton = document.getElementById('settings-button');
-  if (settingsButton) {
-    settingsButton.addEventListener('click', () => {
-      themeModal.classList.add('active');
-    });
-  }
+
 }
 
-// 绑定快速添加事件
-function bindQuickAdd() {
-  const quickAddElements = document.querySelectorAll('.quick-add');
-  quickAddElements.forEach(element => {
-    element.addEventListener('click', () => {
-      const categoryElement = element.closest('.category');
-      const input = categoryElement.querySelector('input');
-      input.focus();
-    });
-  });
-}
+
 
 // 应用主题
 function applyTheme(theme) {
