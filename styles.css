@@ -378,27 +378,11 @@ input[type="text"]:focus {
 
 .task-content {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
 }
 
-.drag-icon {
-  color: var(--text-secondary);
-  cursor: grab;
-  font-size: 1.1em;
-  user-select: none;
-  padding: 2px;
-  border-radius: 4px;
-  transition: var(--transition);
-}
 
-.drag-icon:hover {
-  background-color: rgba(0,0,0,0.05);
-}
-
-.drag-icon:active {
-  cursor: grabbing;
-}
 
 .task-text {
   flex: 1;
@@ -413,12 +397,6 @@ input[type="text"]:focus {
   text-decoration: line-through;
 }
 
-.task-date {
-  font-size: 0.75em;
-  color: var(--text-secondary);
-  margin-left: 24px;
-}
-
 .delete-btn {
   color: #e74c3c;
   cursor: pointer;
@@ -426,7 +404,15 @@ input[type="text"]:focus {
   border-radius: 4px;
   font-size: 0.9em;
   transition: var(--transition);
-  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+.task-date {
+  font-size: 0.75em;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  width: 80px;
+  text-align: right;
 }
 
 .delete-btn:hover {

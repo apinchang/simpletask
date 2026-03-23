@@ -145,10 +145,10 @@ function renderTasks(category) {
   list.innerHTML = tasks[category].map(task => `
     <li class="task-item" data-id="${task.id}">
       <div class="task-content">
-        <span class="task-text${task.completed ? ' completed' : ''}">${task.text}</span>
         <span class="delete-btn">×</span>
+        <span class="task-text${task.completed ? ' completed' : ''}">${task.text}</span>
+        <span class="task-date">${formatDate(task.createdAt)}</span>
       </div>
-      <div class="task-date">${formatDate(task.createdAt)}</div>
     </li>
   `).join('');
 
@@ -616,10 +616,7 @@ function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleString('zh-CN', {
     year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
+    month: '2-digit'
   });
 }
 
