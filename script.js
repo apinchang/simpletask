@@ -843,15 +843,29 @@ function initSortable(category) {
   if (!list) return;
   
   try {
-    sortableInstances[category] = new Sortable(list, {
-      animation: 150,
-      ghostClass: 'sortable-ghost',
-      dragClass: 'sortable-drag',
-      group: 'tasks',
-      onEnd: function(evt) {
-        handleSortEnd(evt);
-      }
-    });
+    if (sortableInstances[category]) {
+      // 如果已经存在实例，更新设置
+      sortableInstances[category].option({
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        group: 'tasks',
+        onEnd: function(evt) {
+          handleSortEnd(evt);
+        }
+      });
+    } else {
+      // 创建新实例
+      sortableInstances[category] = new Sortable(list, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        group: 'tasks',
+        onEnd: function(evt) {
+          handleSortEnd(evt);
+        }
+      });
+    }
   } catch (error) {
     console.error('初始化SortableJS失败:', error);
   }
