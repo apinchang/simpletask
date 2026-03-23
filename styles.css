@@ -402,7 +402,6 @@ input[type="text"]:focus {
 }
 
 .task-item:hover {
-  transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
 
