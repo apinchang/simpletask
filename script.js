@@ -94,6 +94,11 @@ function renderTasks(category) {
     return;
   }
   
+  // 确保tasks[category]是数组
+  if (!tasks[category] || !Array.isArray(tasks[category])) {
+    tasks[category] = [];
+  }
+  
   console.log('渲染分类:', category, '任务数量:', tasks[category].length);
   
   list.innerHTML = tasks[category].map(task => `
@@ -195,13 +200,29 @@ function getTaskCategory(taskItem) {
 
 function saveTasks() {
   console.log('保存数据:', { tasks, historyTasks, categoryTitles, currentTheme });
-  chrome.storage.local.set({ tasks, historyTasks, categoryTitles, currentTheme }, () => {
-    console.log('数据保存完成');
+  
+  // 确保tasks对象结构完整
+  if (!tasks) {
+    tasks = {
+      urgentImportant: [],
+      important: [],
+      normal: []
+    };
+  }
+  
+  chrome.storage.local.set({ tasks, historyTasks, categoryTitles, currentTheme }, (error) => {
+    if (error) {
+      console.error('数据保存失败:', error);
+    } else {
+      console.log('数据保存完成');
+    }
   });
   
   // 更新任务计数
-  updateTaskCounts();
-  updateCategoryBadges();
+  if (categoryMap) {
+    updateTaskCounts();
+    updateCategoryBadges();
+  }
 }
 
 // 调试函数：打印存储状态
@@ -376,17 +397,24 @@ function updateTaskCounts() {
   };
   
   // 更新分类徽章
-  Object.keys(categoryMap).forEach(category => {
-    if (categoryMap[category].badge) {
-      categoryMap[category].badge.textContent = counts[category];
-    }
-  });
+  if (categoryMap) {
+    Object.keys(categoryMap).forEach(category => {
+      if (categoryMap[category].badge) {
+        categoryMap[category].badge.textContent = counts[category];
+      }
+    });
+  }
   
   // 更新总任务数
   if (totalTasksElement) {
     const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
     totalTasksElement.textContent = total;
   }
+}
+
+// 更新分类徽章
+function updateCategoryBadges() {
+  updateTaskCounts();
 }
 
 // 渲染历史任务
