@@ -354,7 +354,7 @@ input[type="text"]:focus {
 
 
 .task-item:hover {
-  transform: translateY(-1px);
+  /* 移除上浮效果 */
 }
 
 /* 不同分类任务的悬停效果 */
