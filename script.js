@@ -299,31 +299,55 @@ function addTask(category) {
 function bindAddTaskEvents() {
   console.log('绑定添加任务事件...');
   
-  if (categoryMap.urgentImportant.button) {
-    categoryMap.urgentImportant.button.addEventListener('click', () => addTask('urgentImportant'));
+  // 确保categoryMap已经定义
+  if (!categoryMap) {
+    console.error('categoryMap未定义');
+    return;
   }
-  if (categoryMap.urgentImportant.input) {
+  
+  // 绑定urgentImportant分类的事件
+  if (categoryMap.urgentImportant && categoryMap.urgentImportant.button) {
+    categoryMap.urgentImportant.button.addEventListener('click', () => addTask('urgentImportant'));
+  } else {
+    console.error('categoryMap.urgentImportant.button不存在');
+  }
+  
+  if (categoryMap.urgentImportant && categoryMap.urgentImportant.input) {
     categoryMap.urgentImportant.input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') addTask('urgentImportant');
     });
+  } else {
+    console.error('categoryMap.urgentImportant.input不存在');
   }
 
-  if (categoryMap.important.button) {
+  // 绑定important分类的事件
+  if (categoryMap.important && categoryMap.important.button) {
     categoryMap.important.button.addEventListener('click', () => addTask('important'));
+  } else {
+    console.error('categoryMap.important.button不存在');
   }
-  if (categoryMap.important.input) {
+  
+  if (categoryMap.important && categoryMap.important.input) {
     categoryMap.important.input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') addTask('important');
     });
+  } else {
+    console.error('categoryMap.important.input不存在');
   }
 
-  if (categoryMap.normal.button) {
+  // 绑定normal分类的事件
+  if (categoryMap.normal && categoryMap.normal.button) {
     categoryMap.normal.button.addEventListener('click', () => addTask('normal'));
+  } else {
+    console.error('categoryMap.normal.button不存在');
   }
-  if (categoryMap.normal.input) {
+  
+  if (categoryMap.normal && categoryMap.normal.input) {
     categoryMap.normal.input.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') addTask('normal');
     });
+  } else {
+    console.error('categoryMap.normal.input不存在');
   }
 }
 
@@ -338,6 +362,8 @@ function bindFooterEvents() {
       e.preventDefault();
       alert('历史任务功能需要单独实现');
     });
+  } else {
+    console.error('historyLink不存在');
   }
 
   if (exportLink) {
@@ -352,6 +378,8 @@ function bindFooterEvents() {
       a.click();
       URL.revokeObjectURL(url);
     });
+  } else {
+    console.error('exportLink不存在');
   }
 
   if (importLink) {
@@ -380,6 +408,8 @@ function bindFooterEvents() {
       });
       input.click();
     });
+  } else {
+    console.error('importLink不存在');
   }
 }
 
@@ -387,7 +417,10 @@ function bindFooterEvents() {
 window.addEventListener('DOMContentLoaded', () => {
   console.log('DOM加载完成，开始初始化...');
   loadSavedData();
-  bindAddTaskEvents();
-  bindFooterEvents();
-  console.log('初始化完成');
+  // 确保在loadSavedData之后调用bindAddTaskEvents
+  setTimeout(() => {
+    bindAddTaskEvents();
+    bindFooterEvents();
+    console.log('初始化完成');
+  }, 100);
 });
