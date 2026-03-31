@@ -18,6 +18,9 @@ let categoryTitles = {
 // DOM元素
 let categoryMap;
 
+// Sortable实例存储
+let sortables = {};
+
 // 加载保存的任务
 function loadSavedData() {
   // 在DOM加载完成后获取DOM元素
@@ -105,13 +108,15 @@ function renderTasks(category) {
     text.addEventListener('click', toggleTaskComplete);
   });
   
-  // 初始化SortableJS
-  new Sortable(list, {
-    group: 'tasks',
-    animation: 150,
-    ghostClass: 'sortable-ghost',
-    onEnd: handleTaskMove
-  });
+  // 初始化SortableJS（只初始化一次）
+  if (!sortables[category]) {
+    sortables[category] = new Sortable(list, {
+      group: 'tasks',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      onEnd: handleTaskMove
+    });
+  }
 }
 
 // 删除任务
