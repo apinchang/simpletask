@@ -23,6 +23,8 @@ let sortables = {};
 
 // 加载保存的任务
 function loadSavedData() {
+  console.log('开始加载数据...');
+  
   // 在DOM加载完成后获取DOM元素
   categoryMap = {
     urgentImportant: {
@@ -42,10 +44,15 @@ function loadSavedData() {
     }
   };
   
+  console.log('categoryMap:', categoryMap);
+  
   try {
     const tasksData = localStorage.getItem('tasks');
+    console.log('从localStorage加载的tasks数据:', tasksData);
+    
     if (tasksData) {
       tasks = JSON.parse(tasksData);
+      console.log('解析后的tasks:', tasks);
     }
     
     const historyTasksData = localStorage.getItem('historyTasks');
@@ -75,6 +82,7 @@ function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
     localStorage.setItem('historyTasks', JSON.stringify(historyTasks));
     localStorage.setItem('categoryTitles', JSON.stringify(categoryTitles));
+    console.log('数据已保存到localStorage');
   } catch (error) {
     console.error('保存数据失败:', error);
   }
@@ -82,6 +90,7 @@ function saveTasks() {
 
 // 渲染所有任务
 function renderAllTasks() {
+  console.log('开始渲染所有任务...');
   renderTasks('urgentImportant');
   renderTasks('important');
   renderTasks('normal');
@@ -89,8 +98,21 @@ function renderAllTasks() {
 
 // 渲染任务
 function renderTasks(category) {
+  console.log(`渲染任务分类: ${category}`);
+  
+  if (!categoryMap[category]) {
+    console.error(`categoryMap[${category}]不存在`);
+    return;
+  }
+  
   const list = categoryMap[category].list;
+  if (!list) {
+    console.error(`categoryMap[${category}].list不存在`);
+    return;
+  }
+  
   const tasksList = tasks[category] || [];
+  console.log(`分类 ${category} 的任务列表:`, tasksList);
   
   list.innerHTML = tasksList.map(task => `
     <li class="task-item" data-id="${task.id}">
@@ -236,7 +258,19 @@ function getCategoryFromList(list) {
 
 // 添加任务
 function addTask(category) {
+  console.log(`添加任务到分类: ${category}`);
+  
+  if (!categoryMap[category]) {
+    console.error(`categoryMap[${category}]不存在`);
+    return;
+  }
+  
   const input = categoryMap[category].input;
+  if (!input) {
+    console.error(`categoryMap[${category}].input不存在`);
+    return;
+  }
+  
   const text = input.value.trim();
   
   if (!text) return;
@@ -248,83 +282,112 @@ function addTask(category) {
     createdAt: Date.now()
   };
   
+  // 确保tasks[category]是数组
+  if (!tasks[category]) {
+    tasks[category] = [];
+  }
+  
   tasks[category].push(task);
   input.value = '';
   
   saveTasks();
   renderTasks(category);
+  console.log(`任务已添加到分类 ${category}:`, task);
 }
 
 // 绑定添加任务事件
 function bindAddTaskEvents() {
-  categoryMap.urgentImportant.button.addEventListener('click', () => addTask('urgentImportant'));
-  categoryMap.urgentImportant.input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addTask('urgentImportant');
-  });
+  console.log('绑定添加任务事件...');
+  
+  if (categoryMap.urgentImportant.button) {
+    categoryMap.urgentImportant.button.addEventListener('click', () => addTask('urgentImportant'));
+  }
+  if (categoryMap.urgentImportant.input) {
+    categoryMap.urgentImportant.input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask('urgentImportant');
+    });
+  }
 
-  categoryMap.important.button.addEventListener('click', () => addTask('important'));
-  categoryMap.important.input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addTask('important');
-  });
+  if (categoryMap.important.button) {
+    categoryMap.important.button.addEventListener('click', () => addTask('important'));
+  }
+  if (categoryMap.important.input) {
+    categoryMap.important.input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask('important');
+    });
+  }
 
-  categoryMap.normal.button.addEventListener('click', () => addTask('normal'));
-  categoryMap.normal.input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') addTask('normal');
-  });
+  if (categoryMap.normal.button) {
+    categoryMap.normal.button.addEventListener('click', () => addTask('normal'));
+  }
+  if (categoryMap.normal.input) {
+    categoryMap.normal.input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask('normal');
+    });
+  }
 }
 
 // 绑定历史任务链接事件
 function bindFooterEvents() {
-  document.getElementById('history-link').addEventListener('click', (e) => {
-    e.preventDefault();
-    // 显示历史任务
-    alert('历史任务功能需要单独实现');
-  });
-
-  document.getElementById('export-link').addEventListener('click', (e) => {
-    e.preventDefault();
-    // 导出任务
-    const data = JSON.stringify(tasks);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'tasks.json';
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-
-  document.getElementById('import-link').addEventListener('click', (e) => {
-    e.preventDefault();
-    // 导入任务
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const importedTasks = JSON.parse(event.target.result);
-            tasks = importedTasks;
-            saveTasks();
-            renderAllTasks();
-            alert('导入成功');
-          } catch (error) {
-            alert('导入失败: ' + error.message);
-          }
-        };
-        reader.readAsText(file);
-      }
+  const historyLink = document.getElementById('history-link');
+  const exportLink = document.getElementById('export-link');
+  const importLink = document.getElementById('import-link');
+  
+  if (historyLink) {
+    historyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('历史任务功能需要单独实现');
     });
-    input.click();
-  });
+  }
+
+  if (exportLink) {
+    exportLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const data = JSON.stringify(tasks);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tasks.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  if (importLink) {
+    importLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              const importedTasks = JSON.parse(event.target.result);
+              tasks = importedTasks;
+              saveTasks();
+              renderAllTasks();
+              alert('导入成功');
+            } catch (error) {
+              alert('导入失败: ' + error.message);
+            }
+          };
+          reader.readAsText(file);
+        }
+      });
+      input.click();
+    });
+  }
 }
 
 // 页面加载完成后初始化
 window.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM加载完成，开始初始化...');
   loadSavedData();
   bindAddTaskEvents();
   bindFooterEvents();
+  console.log('初始化完成');
 });
