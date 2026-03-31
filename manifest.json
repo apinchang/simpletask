@@ -1,16 +1,34 @@
 {
-  "manifest_version": 3,
-  "name": "简单任务",
-  "version": "1.0",
-  "description": "简单任务管理插件",
-  "chrome_url_overrides": {
-    "newtab": "newtab.html"
-  },
-  "permissions": ["storage"],
-  "icons": {
-    "16": "icons/tasks-16.png",
-    "32": "icons/tasks-32.png",
-    "48": "icons/tasks-48.png",
-    "128": "icons/tasks-128.png"
-  }
+   "chrome_url_overrides": {
+      "newtab": "newtab.html"
+   },
+   "description": "简单任务管理插件",
+   "icons": {
+      "128": "icons/tasks-128.png",
+      "16": "icons/tasks-16.png",
+      "32": "icons/tasks-32.png",
+      "48": "icons/tasks-48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvUwzsfNvQI0jJHRsPfHtaviitOXa2HBlsBOemGaPrWVEfQWMUloGBD2RATeCCxbeqauTyUcqEwrfge+I8oirNobe244K2FgJ6w+7fV891Znd0RuOnqVjcZIJKyEpa41b27f07y2hEgEHwbsLbLZz+aOpC0rd02uDlfy1mIx4vR2kBX7MYFiv81iTrz4wosPEXLxNqm6OjIaIAKY1NuaG0t+RnZTOOz8ompTYrOERNVhj/TpDb7e48Tada7WqFr2dUoodQCn+yk+pR1fZL8sAl6N3ynIB3T1wwCD5MBzf0b7Qy9+XzZaFksehKPbSl1+ROPEc3HTlbFRRpThcdZcEMQIDAQAB",
+   "manifest_version": 3,
+   "name": "简单任务",
+   "permissions": [ "storage" ],
+   "update_url": "https://edge.microsoft.com/extensionwebstorebase/v1/crx",
+   "version": "1.0",
+   "action": {
+      "default_icon": {
+         "16": "icons/tasks-16.png",
+         "32": "icons/tasks-32.png",
+         "48": "icons/tasks-48.png",
+         "128": "icons/tasks-128.png"
+      },
+      "default_title": "简单任务"
+   },
+   "background": {
+      "service_worker": "service-worker.js",
+      "type": "module"
+   },
+   "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'"
+   }
 }
