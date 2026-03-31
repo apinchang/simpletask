@@ -16,26 +16,29 @@ let categoryTitles = {
 };
 
 // DOM元素
-const categoryMap = {
-  urgentImportant: {
-    input: document.querySelector('.urgent-important input'),
-    button: document.querySelector('.urgent-important button'),
-    list: document.querySelector('.urgent-important .task-list')
-  },
-  important: {
-    input: document.querySelector('.important input'),
-    button: document.querySelector('.important button'),
-    list: document.querySelector('.important .task-list')
-  },
-  normal: {
-    input: document.querySelector('.category:not(.urgent-important):not(.important) input'),
-    button: document.querySelector('.category:not(.urgent-important):not(.important) button'),
-    list: document.querySelector('.category:not(.urgent-important):not(.important) .task-list')
-  }
-};
+let categoryMap;
 
 // 加载保存的任务
 function loadSavedData() {
+  // 在DOM加载完成后获取DOM元素
+  categoryMap = {
+    urgentImportant: {
+      input: document.querySelector('.urgent-important input'),
+      button: document.querySelector('.urgent-important button'),
+      list: document.querySelector('.urgent-important .task-list')
+    },
+    important: {
+      input: document.querySelector('.important input'),
+      button: document.querySelector('.important button'),
+      list: document.querySelector('.important .task-list')
+    },
+    normal: {
+      input: document.querySelector('.category:not(.urgent-important):not(.important) input'),
+      button: document.querySelector('.category:not(.urgent-important):not(.important) button'),
+      list: document.querySelector('.category:not(.urgent-important):not(.important) .task-list')
+    }
+  };
+  
   try {
     const tasksData = localStorage.getItem('tasks');
     if (tasksData) {
@@ -248,69 +251,75 @@ function addTask(category) {
 }
 
 // 绑定添加任务事件
-categoryMap.urgentImportant.button.addEventListener('click', () => addTask('urgentImportant'));
-categoryMap.urgentImportant.input.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') addTask('urgentImportant');
-});
+function bindAddTaskEvents() {
+  categoryMap.urgentImportant.button.addEventListener('click', () => addTask('urgentImportant'));
+  categoryMap.urgentImportant.input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addTask('urgentImportant');
+  });
 
-categoryMap.important.button.addEventListener('click', () => addTask('important'));
-categoryMap.important.input.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') addTask('important');
-});
+  categoryMap.important.button.addEventListener('click', () => addTask('important'));
+  categoryMap.important.input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addTask('important');
+  });
 
-categoryMap.normal.button.addEventListener('click', () => addTask('normal'));
-categoryMap.normal.input.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') addTask('normal');
-});
+  categoryMap.normal.button.addEventListener('click', () => addTask('normal'));
+  categoryMap.normal.input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addTask('normal');
+  });
+}
 
 // 绑定历史任务链接事件
-document.getElementById('history-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  // 显示历史任务
-  alert('历史任务功能需要单独实现');
-});
-
-// 绑定导出链接事件
-document.getElementById('export-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  // 导出任务
-  const data = JSON.stringify(tasks);
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'tasks.json';
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-// 绑定导入链接事件
-document.getElementById('import-link').addEventListener('click', (e) => {
-  e.preventDefault();
-  // 导入任务
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const importedTasks = JSON.parse(event.target.result);
-          tasks = importedTasks;
-          saveTasks();
-          renderAllTasks();
-          alert('导入成功');
-        } catch (error) {
-          alert('导入失败: ' + error.message);
-        }
-      };
-      reader.readAsText(file);
-    }
+function bindFooterEvents() {
+  document.getElementById('history-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    // 显示历史任务
+    alert('历史任务功能需要单独实现');
   });
-  input.click();
-});
+
+  document.getElementById('export-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    // 导出任务
+    const data = JSON.stringify(tasks);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'tasks.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('import-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    // 导入任务
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const importedTasks = JSON.parse(event.target.result);
+            tasks = importedTasks;
+            saveTasks();
+            renderAllTasks();
+            alert('导入成功');
+          } catch (error) {
+            alert('导入失败: ' + error.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+    input.click();
+  });
+}
 
 // 页面加载完成后初始化
-window.addEventListener('DOMContentLoaded', loadSavedData);
+window.addEventListener('DOMContentLoaded', () => {
+  loadSavedData();
+  bindAddTaskEvents();
+  bindFooterEvents();
+});
