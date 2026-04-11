@@ -7,11 +7,19 @@
 </head>
 <body>
   <header>
-    <h1>🏠 简单任务</h1>
-    <p>20%的工作带来80%的效益</p>
-    <!-- <nav class="nav-links">
-      <a href="history.html">📜 历史记录</a>
-    </nav> -->
+    <div class="header-content">
+      <div class="header-left">
+        <button id="history-link" class="header-btn">📜 历史记录</button>
+      </div>
+      <div class="header-center">
+        <h1>🏠 简单任务</h1>
+        <p class="subtitle">20%的工作带来80%的效益</p>
+      </div>
+      <div class="header-right">
+        <button id="export-link" class="header-btn">📤 导出</button>
+        <button id="import-link" class="header-btn">📥 导入</button>
+      </div>
+    </div>
   </header>
 
   <div class="categories">
@@ -20,7 +28,7 @@
       <h2>🔥 重要且紧急</h2>
       <div class="input-group">
         <input type="text" placeholder="添加任务...">
-        <button>+</button>
+        <button>✚</button>
       </div>
       <ul class="task-list"></ul>
     </section>
@@ -29,7 +37,7 @@
       <h2>⏳ 重要不紧急</h2>
       <div class="input-group">
         <input type="text" placeholder="添加任务...">
-        <button>+</button>
+        <button>✚</button>
       </div>
       <ul class="task-list"></ul>
     </section>
@@ -38,7 +46,7 @@
       <h2>📦 不重要不紧急，不干也行</h2>
       <div class="input-group">
         <input type="text" placeholder="添加任务...">
-        <button>+</button>
+        <button>✚</button>
       </div>
       <ul class="task-list"></ul>
     </section>
@@ -47,13 +55,63 @@
   <footer>
     <div class="footer-content">
       <div class="copyright">© 2026 简单任务</div>
-      <div class="footer-links">
-        <a href="#" id="history-link">📜 历史任务</a>
-        <a href="#" id="export-link">📤 导出</a>
-        <a href="#" id="import-link">📥 导入</a>
-      </div>
     </div>
   </footer>
+
+  <!-- 编辑任务模态对话框 -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="modal-header-row">
+          <h3 class="modal-title">编辑任务</h3>
+          <span class="close">&times;</span>
+        </div>
+        <div class="form-group">
+          <!-- <label for="task-textarea">任务内容</label> -->
+          <textarea id="task-textarea" rows="5"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancel-btn" class="btn btn-cancel">取消</button>
+        <button id="save-btn" class="btn btn-save">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 历史记录模态对话框 -->
+  <div id="history-modal" class="modal">
+    <div class="modal-content modal-content-wide">
+      <div class="modal-body">
+        <div class="modal-header-row">
+          <h3 class="modal-title">📜 历史记录</h3>
+          <div class="modal-actions">
+            <button id="clear-history-btn" class="btn btn-danger">一键清空</button>
+            <span class="close">&times;</span>
+          </div>
+        </div>
+        <div class="history-table-container">
+          <table id="history-table" class="history-table">
+            <thead>
+              <tr>
+                <th class="date-column">创建日期</th>
+                <th class="date-column">删除日期</th>
+                <th class="content-column">待办内容</th>
+                <th class="action-column">操作</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <!-- 历史记录将通过JavaScript动态填充 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="history-close-btn" class="btn btn-cancel">关闭</button>
+      </div>
+    </div>
+  </div>
+
+
 
   <script src="Sortable.min.js"></script>
   <script src="script.js"></script>
